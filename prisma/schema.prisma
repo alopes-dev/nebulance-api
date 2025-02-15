@@ -1,0 +1,71 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String      @id @default(cuid())
+  email     String      @unique
+  password  String
+  name      String
+  accounts  Account[]
+  transactions Transaction[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Account {
+  id          String      @id @default(cuid())
+  name        String
+  type        AccountType
+  balance     Float
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Transaction {
+  id          String      @id @default(cuid())
+  amount      Float
+  type        TransactionType
+  category    Category
+  description String
+  date        DateTime
+  accountId   String
+  account     Account     @relation(fields: [accountId], references: [id])
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  CREDIT_CARD
+  INVESTMENT
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum Category {
+  FOOD
+  TRANSPORT
+  HOUSING
+  UTILITIES
+  ENTERTAINMENT
+  HEALTHCARE
+  SHOPPING
+  OTHERS
+}

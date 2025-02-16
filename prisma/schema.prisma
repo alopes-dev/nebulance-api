@@ -42,7 +42,7 @@ model Transaction {
   account     Account     @relation(fields: [accountId], references: [id])
   userId      String
   user        User        @relation(fields: [userId], references: [id])
-  createdAt   DateTime    @default(now())
+  createdAt   DateTime    @default(now()) // example: 2025-02-15T00:00:00.000Z
   updatedAt   DateTime    @updatedAt
 }
 

@@ -12,7 +12,7 @@ export class UserService {
     return this.model.getAll();
   }
 
-  async createUser(payload: IUser) {
-    return this.model.create(payload);
+  async me(userId: string) {
+    return this.model.me(userId);
   }
 }

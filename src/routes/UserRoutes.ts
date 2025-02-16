@@ -1,8 +1,9 @@
-import { FastifyInstance, FastifyRequest } from "fastify";
 import { UserController } from "@controllers/UserController";
 import { ControllerContainer } from "@containers/ControllerContainer";
 import { z } from "zod";
-import { FastifyTypedInstance, IUser } from "@utils/types";
+import { FastifyTypedInstance } from "@utils/types";
+import { addJwtHook } from "./helpers";
+import { FastifyRequest } from "fastify";
 
 class UserRoutes {
   private readonly prefix = "/users";
@@ -12,10 +13,16 @@ class UserRoutes {
   init(app: FastifyTypedInstance) {
     const userSchema = {
       schema: {
-        tags: ["users"],
+        tags: ["Users"],
+        preValidation: [app.authenticate],
       },
     };
 
+    this.me(app, userSchema);
+    this.getAll(app, userSchema);
+  }
+
+  private getAll(app: FastifyTypedInstance, userSchema: any) {
     app.get(
       this.prefix,
       {
@@ -27,22 +34,19 @@ class UserRoutes {
       },
       this.controller.getAllUsers.bind(this.controller)
     );
+  }
 
-    app.post(
-      this.prefix,
+  private me(app: FastifyTypedInstance, userSchema: any) {
+    app.get(
+      `/me`,
       {
         ...userSchema,
-        schema: {
-          ...userSchema.schema,
-          description: "Create a new user",
-          body: z.object({
-            name: z.string(),
-            email: z.string(),
-            phoneNumber: z.string(),
-          }),
-        },
+        description: "Get the current user",
       },
-      this.controller.createUser.bind(this.controller)
+      // as async function
+      async (request: FastifyRequest, reply) => {
+        return this.controller.me(request, reply);
+      }
     );
   }
 }

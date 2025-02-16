@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { UserService } from "@services/UserService";
-import { IUser } from "@utils/types";
+import { IUser, JWTPayload } from "@utils/types";
+import { getUserFromToken } from "@routes/helpers";
 
 export class UserController {
   private readonly service: UserService;
@@ -13,12 +14,10 @@ export class UserController {
     const users = await this.service.getAllUsers();
     reply.send(users);
   }
+  async me(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const userFromToken = await getUserFromToken(req);
 
-  async createUser(
-    req: FastifyRequest<{ Body: IUser }>,
-    reply: FastifyReply
-  ): Promise<void> {
-    const user = await this.service.createUser(req.body);
+    const user = await this.service.me(userFromToken?.id);
     reply.send(user);
   }
 }

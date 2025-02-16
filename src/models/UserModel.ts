@@ -27,4 +27,17 @@ export class UserModel {
   static async delete(id: string) {
     return prisma.user.delete({ where: { id } });
   }
+
+  static async me(userId: string) {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
 }

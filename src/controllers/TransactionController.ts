@@ -10,25 +10,22 @@ export class TransactionController {
     this.service = service;
   }
 
-  async getAllTransactions(
-    req: FastifyRequest,
-    reply: FastifyReply
-  ): Promise<void> {
-    const transactions = await this.service.getAllTransactions();
+  async index(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const transactions = await this.service.getAllService();
     reply.send(transactions);
   }
 
-  async createTransaction(
+  async create(
     req: FastifyRequest<{ Body: ITransaction }>,
     reply: FastifyReply
   ): Promise<void> {
-    const transaction = await this.service.createTransaction(req.body);
+    const transaction = await this.service.createService(req.body);
     reply.send(transaction);
   }
 
   async analysis(req: FastifyRequest, reply: FastifyReply): Promise<void> {
     const userFromToken = await getUserFromToken(req);
-    const analysis = await this.service.analysis(userFromToken?.id);
+    const analysis = await this.service.analysisService(userFromToken?.id);
     reply.send(analysis);
   }
 }

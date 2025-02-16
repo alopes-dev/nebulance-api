@@ -17,12 +17,12 @@ class TransactionRoutes {
       },
     };
 
-    this.getAll(app, transactionSchema);
+    this.index(app, transactionSchema);
     this.create(app, transactionSchema);
     this.analysis(app, transactionSchema);
   }
 
-  private getAll(app: FastifyTypedInstance, transactionSchema: any) {
+  private index(app: FastifyTypedInstance, transactionSchema: any) {
     app.get(
       this.prefix,
       {
@@ -32,7 +32,7 @@ class TransactionRoutes {
           description: "Get all transactions",
         },
       },
-      this.controller.getAllTransactions.bind(this.controller)
+      this.controller.index.bind(this.controller)
     );
   }
 
@@ -40,16 +40,18 @@ class TransactionRoutes {
     const createTransactionSchema = z.object({
       amount: z.number(),
       type: z.enum(["INCOME", "EXPENSE", "TRANSFER"]),
-      category: z.enum([
-        "FOOD",
-        "TRANSPORT",
-        "HOUSING",
-        "UTILITIES",
-        "ENTERTAINMENT",
-        "HEALTHCARE",
-        "SHOPPING",
-        "OTHERS",
-      ]),
+      category: z
+        .enum([
+          "FOOD",
+          "TRANSPORT",
+          "HOUSING",
+          "UTILITIES",
+          "ENTERTAINMENT",
+          "HEALTHCARE",
+          "SHOPPING",
+          "OTHERS",
+        ])
+        .optional(),
       description: z.string(),
       accountId: z.string(),
       userId: z.string(),
@@ -66,7 +68,7 @@ class TransactionRoutes {
           body: createTransactionSchema,
         },
       },
-      this.controller.createTransaction.bind(this.controller)
+      this.controller.create.bind(this.controller)
     );
   }
 

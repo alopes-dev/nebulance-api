@@ -25,6 +25,9 @@
       "@models/*": [
         "src/models/*"
       ],
+      "@AI/*": [
+        "src/AI/*"
+      ],
       "@controllers/*": [
         "src/controllers/*"
       ],

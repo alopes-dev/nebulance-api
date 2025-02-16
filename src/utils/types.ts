@@ -47,6 +47,15 @@ export interface ITransaction {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface ITrainingData {
+  data: Array<{
+    input: [number, number];
+    output: number;
+  }>;
+  categories: string[];
+}
+
 export interface JWTPayload {
   email: string;
   name: string;
@@ -54,3 +63,10 @@ export interface JWTPayload {
 }
 
 export interface IAuth extends Pick<IUser, "email" | "password"> {}
+
+export interface ITransactionCategorization {
+  id?: string;
+  transactionId: string;
+  category: Category;
+  confidence: number;
+}

@@ -1,18 +1,29 @@
 import { PrismaClient } from "@prisma/client";
-import { ITransaction, IUser } from "@utils/types";
+import { ITransaction } from "@utils/types";
 
 const prisma = new PrismaClient();
 
 export class TransactionModel {
-  static async getAll() {
+  static async getAllModel() {
     return prisma.transaction.findMany();
   }
 
-  static async getById(id: string) {
+  static async getOneModel(id: string) {
     return prisma.transaction.findUnique({ where: { id } });
   }
 
-  static async create(payload: Omit<ITransaction, "id">) {
+  static async getByUserIdModel(userId: string) {
+    return prisma.transaction.findMany({
+      where: { userId },
+      select: {
+        description: true,
+        amount: true,
+        category: true,
+      },
+    });
+  }
+
+  static async createModel(payload: Omit<ITransaction, "id">) {
     return prisma.transaction.create({
       data: {
         amount: payload.amount,
@@ -26,7 +37,7 @@ export class TransactionModel {
     });
   }
 
-  static async update(id: string, payload: Partial<ITransaction>) {
+  static async updateModel(id: string, payload: Partial<ITransaction>) {
     return prisma.transaction.update({
       where: { id },
       data: {
@@ -58,7 +69,7 @@ export class TransactionModel {
     });
   }
 
-  static async delete(id: string) {
+  static async deleteModel(id: string) {
     return prisma.transaction.delete({ where: { id } });
   }
 }

@@ -18,11 +18,12 @@ class AccountRoutes {
       },
     };
 
-    this.getAll(app, accountSchema);
+    this.index(app, accountSchema);
+    this.getUserAccount(app, accountSchema);
     this.create(app, accountSchema);
   }
 
-  private getAll(app: FastifyTypedInstance, accountSchema: any) {
+  private index(app: FastifyTypedInstance, accountSchema: any) {
     app.get(
       this.prefix,
       {
@@ -32,7 +33,21 @@ class AccountRoutes {
           description: "Get all accounts",
         },
       },
-      this.controller.getAllAccounts.bind(this.controller)
+      this.controller.index.bind(this.controller)
+    );
+  }
+
+  private getUserAccount(app: FastifyTypedInstance, accountSchema: any) {
+    app.get(
+      `${this.prefix}/me`,
+      {
+        ...accountSchema,
+        schema: {
+          ...accountSchema.schema,
+          description: "Get user account",
+        },
+      },
+      this.controller.getUserAccount.bind(this.controller)
     );
   }
 

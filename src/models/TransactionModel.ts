@@ -19,6 +19,10 @@ export class TransactionModel {
         description: true,
         amount: true,
         category: true,
+        date: true,
+      },
+      orderBy: {
+        date: "desc",
       },
     });
   }

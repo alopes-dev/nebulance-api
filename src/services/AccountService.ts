@@ -12,6 +12,10 @@ export class AccountService {
     return this.model.getAll();
   }
 
+  async getUserAccount(userId: string) {
+    return this.model.getByUserId(userId);
+  }
+
   async createAccount(payload: IAccount) {
     return this.model.create(payload);
   }

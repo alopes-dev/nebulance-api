@@ -6,7 +6,10 @@
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
     "build": "tsup src --format cjs,esm",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:studio": "npx prisma studio"
   },
   "keywords": [],
   "author": "",

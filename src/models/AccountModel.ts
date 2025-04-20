@@ -12,6 +12,10 @@ export class AccountModel {
     return prisma.account.findUnique({ where: { id } });
   }
 
+  static async getByUserId(userId: string) {
+    return prisma.account.findFirst({ where: { userId } });
+  }
+
   static async create(payload: Omit<IAccount, "id">) {
     return prisma.account.create({
       data: {

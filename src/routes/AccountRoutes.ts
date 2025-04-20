@@ -56,6 +56,7 @@ class AccountRoutes {
       name: z.string(),
       type: z.enum(["CHECKING", "SAVINGS", "CREDIT_CARD", "INVESTMENT"]),
       balance: z.number(),
+      monthlyExpenses: z.number(),
       userId: z.string(),
     });
 

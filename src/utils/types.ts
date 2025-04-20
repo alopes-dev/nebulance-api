@@ -30,6 +30,7 @@ export interface IAccount {
   name: string;
   type: AccountType;
   balance: number;
+  monthlyExpenses: number;
   userId: string;
   createdAt?: string;
   updatedAt?: string;

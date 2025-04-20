@@ -23,6 +23,7 @@ export class AccountModel {
         name: payload.name,
         type: payload.type,
         userId: payload.userId,
+        monthlyExpenses: payload.monthlyExpenses,
       },
     });
   }
@@ -35,6 +36,7 @@ export class AccountModel {
         name: payload.name,
         type: payload.type,
         userId: payload.userId,
+        monthlyExpenses: payload.monthlyExpenses,
       },
       select: { id: true },
     });

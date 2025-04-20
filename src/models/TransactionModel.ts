@@ -4,8 +4,8 @@ import { ITransaction } from "@utils/types";
 const prisma = new PrismaClient();
 
 export class TransactionModel {
-  static async getAllModel() {
-    return prisma.transaction.findMany();
+  static async getAllModel(userId: string) {
+    return prisma.transaction.findMany({ where: { userId } });
   }
 
   static async getOneModel(id: string) {

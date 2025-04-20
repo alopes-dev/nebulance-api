@@ -11,8 +11,8 @@ export class TransactionService {
     this.model = model;
   }
 
-  async getAllService() {
-    return this.model.getAllModel();
+  async getAllService(userId: string) {
+    return this.model.getAllModel(userId);
   }
 
   async createService(payload: ITransaction) {

@@ -24,7 +24,7 @@ model Account {
   name        String
   type        AccountType
   balance     Float
-  monthlyExpenses Float
+  monthlyExpenses Float @default(0)
   userId      String
   user        User        @relation(fields: [userId], references: [id])
   transactions Transaction[]

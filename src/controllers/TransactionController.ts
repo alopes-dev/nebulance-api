@@ -11,7 +11,8 @@ export class TransactionController {
   }
 
   async index(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const transactions = await this.service.getAllService();
+    const userFromToken = await getUserFromToken(req);
+    const transactions = await this.service.getAllService(userFromToken?.id);
     reply.send(transactions);
   }
 

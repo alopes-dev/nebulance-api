@@ -16,7 +16,7 @@ export class GoalsController {
       const goals = await this.service.getAllGoals(userFromToken?.id);
       reply.send(goals);
     } catch (error) {
-      reply.status(500).send({ error: "Failed to fetch goals" });
+      reply.status(500).send({ error: error.message });
     }
   }
 

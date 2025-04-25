@@ -25,6 +25,7 @@ model Account {
   type        AccountType
   balance     Float
   monthlyExpenses Float @default(0)
+  goals     Goal[]
   userId      String
   user        User        @relation(fields: [userId], references: [id])
   transactions Transaction[]
@@ -69,4 +70,23 @@ enum Category {
   HEALTHCARE
   SHOPPING
   OTHERS
+}
+
+enum GoalStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Goal {
+  id          String      @id @default(cuid())
+  name        String
+  targetAmount Float
+  currentAmount Float     @default(0)
+  deadline    DateTime
+  status      GoalStatus  @default(IN_PROGRESS)
+  accountId   String
+  account     Account     @relation(fields: [accountId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }

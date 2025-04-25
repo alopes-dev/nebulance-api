@@ -1,4 +1,9 @@
-import { AccountType, Category, TransactionType } from "@prisma/client";
+import {
+  AccountType,
+  Category,
+  TransactionType,
+  // GoalStatus,
+} from "@prisma/client";
 import {
   FastifyBaseLogger,
   FastifyInstance,
@@ -45,6 +50,18 @@ export interface ITransaction {
   description?: string;
   accountId: string;
   userId: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface IGoal {
+  id?: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline: Date;
+  // status: GoalStatus;
+  accountId: string;
   createdAt?: string;
   updatedAt?: string;
 }

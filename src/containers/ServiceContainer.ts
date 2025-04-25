@@ -6,10 +6,13 @@ import { AccountModel } from "@models/AccountModel";
 import { AccountService } from "@services/AccountService";
 import { AuthModel } from "@models/AuthModel";
 import { AuthService } from "@services/AuthService";
+import { GoalsService } from "@services/GoalsService";
+import { GoalsModel } from "@models/GoalsModel";
 
 export const ServiceContainer = {
   userService: new UserService(UserModel),
   transactionService: new TransactionService(TransactionModel),
   accountService: new AccountService(AccountModel),
   authService: new AuthService(AuthModel),
+  goalsService: new GoalsService(GoalsModel),
 };

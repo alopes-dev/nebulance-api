@@ -1,7 +1,6 @@
 import fastify, { FastifyReply, FastifyRequest } from "fastify";
 import { AuthService } from "@services/AuthService";
-import { FastifyTypedInstance, IAuth, IUser, JWTPayload } from "@utils/types";
-import { generateToken } from "@routes/helpers";
+import { FastifyTypedInstance, IAuth, IUser } from "@utils/types";
 
 export class AuthController {
   private readonly service: AuthService;

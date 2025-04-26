@@ -39,6 +39,7 @@ export class TransactionModel {
           date: new Date(payload.date),
           accountId: payload.accountId,
           userId: payload.userId,
+          goalId: payload.goalId,
         },
       });
 

@@ -1,6 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Category, TransactionType } from "@prisma/client";
 import { IGoal } from "@utils/types";
 import { AccountModel } from "./AccountModel";
+import { TransactionModel } from "./TransactionModel";
 
 const prisma = new PrismaClient();
 
@@ -58,10 +59,10 @@ export class GoalsModel {
     });
   }
 
-  static async addAmount(id: string, amount: number) {
+  static async addAmount(id: string, amount: number, userId: string) {
     const goal = await prisma.goal.findUnique({
       where: { id },
-      select: { currentAmount: true, targetAmount: true },
+      select: { currentAmount: true, targetAmount: true, accountId: true },
     });
 
     if (!goal) {
@@ -71,19 +72,34 @@ export class GoalsModel {
     const newAmount = goal.currentAmount + amount;
     const status = newAmount >= goal.targetAmount ? "COMPLETED" : "IN_PROGRESS";
 
-    return prisma.goal.update({
-      where: { id },
-      data: {
-        currentAmount: newAmount,
-        status,
-      },
+    return prisma.$transaction(async (tx) => {
+      const updatedGoal = await tx.goal.update({
+        where: { id },
+        data: {
+          currentAmount: newAmount,
+          status,
+        },
+      });
+
+      await TransactionModel.createModel({
+        amount,
+        type: TransactionType.EXPENSE,
+        category: Category.SAVINGS,
+        description: `Added amount to goal`,
+        date: new Date().toISOString(),
+        accountId: goal.accountId,
+        userId,
+        goalId: id,
+      });
+
+      return updatedGoal;
     });
   }
 
-  static async withdrawAmount(id: string, amount: number) {
+  static async withdrawAmount(id: string, amount: number, userId: string) {
     const goal = await prisma.goal.findUnique({
       where: { id },
-      select: { currentAmount: true },
+      select: { currentAmount: true, accountId: true },
     });
 
     if (!goal) {
@@ -94,12 +110,27 @@ export class GoalsModel {
       throw new Error("Insufficient funds in goal");
     }
 
-    return prisma.goal.update({
-      where: { id },
-      data: {
-        currentAmount: goal.currentAmount - amount,
-        status: "IN_PROGRESS",
-      },
+    return prisma.$transaction(async (tx) => {
+      const updatedGoal = await tx.goal.update({
+        where: { id },
+        data: {
+          currentAmount: goal.currentAmount - amount,
+          status: "IN_PROGRESS",
+        },
+      });
+
+      await TransactionModel.createModel({
+        amount,
+        type: TransactionType.INCOME,
+        category: Category.SAVINGS,
+        description: `Withdrawn amount from goal`,
+        date: new Date().toISOString(),
+        accountId: goal.accountId,
+        userId,
+        goalId: id,
+      });
+
+      return updatedGoal;
     });
   }
 

@@ -50,6 +50,7 @@ export interface ITransaction {
   description?: string;
   accountId: string;
   userId: string;
+  goalId?: string;
   createdAt?: string;
   updatedAt?: string;
 }

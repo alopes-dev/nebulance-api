@@ -28,7 +28,7 @@ export class GoalsService {
     if (!goal) {
       throw new Error("Goal not found");
     }
-    return this.model.addAmount(goalId, amount);
+    return this.model.addAmount(goalId, amount, userId);
   }
 
   async withdrawFromGoal(goalId: string, userId: string, amount: number) {
@@ -36,7 +36,7 @@ export class GoalsService {
     if (!goal) {
       throw new Error("Goal not found");
     }
-    return this.model.withdrawAmount(goalId, amount);
+    return this.model.withdrawAmount(goalId, amount, userId);
   }
 
   async deleteGoal(goalId: string) {

@@ -12,6 +12,10 @@ export class GoalsService {
     return this.model.getAll(userId);
   }
 
+  async getGoal(goalId: string) {
+    return this.model.getGoal(goalId);
+  }
+
   async createGoal(
     payload: Omit<IGoal, "id" | "currentAmount" | "status">,
     userId: string

@@ -17,6 +17,7 @@ class GoalsRoutes {
     };
 
     this.index(app, goalsSchema);
+    this.getGoal(app, goalsSchema);
     this.create(app, goalsSchema);
     this.addToGoal(app, goalsSchema);
     this.withdrawFromGoal(app, goalsSchema);
@@ -38,6 +39,22 @@ class GoalsRoutes {
     );
   }
 
+  private getGoal(app: FastifyTypedInstance, goalsSchema: any) {
+    app.get(
+      `${this.prefix}/:goalId`,
+      {
+        ...goalsSchema,
+        schema: {
+          ...goalsSchema.schema,
+          description: "Get goal by id",
+          params: z.object({
+            goalId: z.string(),
+          }),
+        },
+      },
+      this.controller.getGoal.bind(this.controller)
+    );
+  }
   private create(app: FastifyTypedInstance, goalsSchema: any) {
     const createGoalSchema = z.object({
       name: z.string(),

@@ -18,6 +18,12 @@ export class GoalsModel {
     });
   }
 
+  static async getGoal(id: string) {
+    return prisma.goal.findUnique({
+      where: { id },
+    });
+  }
+
   static async getById(id: string, userId: string) {
     const account = await AccountModel.getByUserId(userId);
 

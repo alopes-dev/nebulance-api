@@ -20,6 +20,23 @@ export class GoalsController {
     }
   }
 
+  async getGoal(
+    req: FastifyRequest<{ Params: { goalId: string } }>,
+    reply: FastifyReply
+  ): Promise<void> {
+    try {
+      const { goalId } = req.params;
+      const goal = await this.service.getGoal(goalId);
+      reply.send(goal);
+    } catch (error) {
+      if (error.message === "Goal not found") {
+        reply.status(404).send({ error: "Goal not found" });
+      } else {
+        reply.status(500).send({ error: "Failed to get goal" });
+      }
+    }
+  }
+
   async create(
     req: FastifyRequest<{
       Body: Pick<IGoal, "name" | "targetAmount" | "deadline" | "accountId">;

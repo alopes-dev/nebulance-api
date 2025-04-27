@@ -136,8 +136,8 @@ export class GoalsController {
   ): Promise<void> {
     try {
       const { goalId } = req.params;
-
-      await this.service.deleteGoal(goalId);
+      const userFromToken = await getUserFromToken(req);
+      await this.service.deleteGoal(goalId, userFromToken?.id);
       reply.status(204).send();
     } catch (error) {
       reply.status(500).send({ error: "Failed to delete goal" });

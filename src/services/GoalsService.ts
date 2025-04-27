@@ -39,8 +39,8 @@ export class GoalsService {
     return this.model.withdrawAmount(goalId, amount, userId);
   }
 
-  async deleteGoal(goalId: string) {
-    return this.model.delete(goalId);
+  async deleteGoal(goalId: string, userId: string) {
+    return this.model.delete(goalId, userId);
   }
 
   async updateGoal(goalId: string, payload: Partial<IGoal>) {

@@ -76,7 +76,7 @@ export class GoalsModel {
       const updatedGoal = await tx.goal.update({
         where: { id },
         data: {
-          currentAmount: newAmount,
+          currentAmount: Number(newAmount.toFixed(2)),
           status,
         },
       });
@@ -111,10 +111,12 @@ export class GoalsModel {
     }
 
     return prisma.$transaction(async (tx) => {
+      const newAmount = goal.currentAmount - amount;
+
       const updatedGoal = await tx.goal.update({
         where: { id },
         data: {
-          currentAmount: goal.currentAmount - amount,
+          currentAmount: Number(newAmount.toFixed(2)),
           status: "IN_PROGRESS",
         },
       });
@@ -134,17 +136,33 @@ export class GoalsModel {
     });
   }
 
-  static async delete(id: string) {
+  static async delete(id: string, userId: string) {
     const goal = await prisma.goal.findUnique({
       where: { id },
+      select: { currentAmount: true, accountId: true },
     });
 
     if (!goal) {
       throw new Error("Goal not found");
     }
 
-    return prisma.goal.delete({
-      where: { id },
+    return prisma.$transaction(async (tx) => {
+      // Create transaction for the returned amount
+      await TransactionModel.createModel({
+        amount: goal.currentAmount,
+        type: TransactionType.INCOME,
+        category: Category.SAVINGS,
+        description: `Goal deleted - amount returned to account`,
+        date: new Date().toISOString(),
+        accountId: goal.accountId,
+        userId,
+        goalId: id,
+      });
+
+      // Delete the goal
+      return tx.goal.delete({
+        where: { id },
+      });
     });
   }
 

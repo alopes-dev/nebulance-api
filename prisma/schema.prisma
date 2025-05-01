@@ -25,7 +25,7 @@ model Account {
   type        AccountType
   balance     Float
   monthlyExpenses Float @default(0)
-  currencyStyle CurrencyStyle @default(USD)
+  currencyStyle CurrencyStyle? @default(USD)
   goals     Goal[]
   userId      String
   user        User        @relation(fields: [userId], references: [id])

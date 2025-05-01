@@ -20,6 +20,7 @@ class TransactionRoutes {
     this.index(app, transactionSchema);
     this.create(app, transactionSchema);
     this.analysis(app, transactionSchema);
+    this.processPDF(app, transactionSchema);
   }
 
   private index(app: FastifyTypedInstance, transactionSchema: any) {
@@ -83,6 +84,25 @@ class TransactionRoutes {
         },
       },
       this.controller.analysis.bind(this.controller)
+    );
+  }
+
+  private processPDF(app: FastifyTypedInstance, transactionSchema: any) {
+    const processPDFSchema = z.object({
+      file: z.string(),
+    });
+
+    app.post(
+      `${this.prefix}/pdf`,
+      {
+        ...transactionSchema,
+        schema: {
+          ...transactionSchema.schema,
+          description: "Process transactions from PDF file (base64 encoded)",
+          body: processPDFSchema,
+        },
+      },
+      this.controller.processPDF.bind(this.controller)
     );
   }
 }

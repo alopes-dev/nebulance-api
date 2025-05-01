@@ -2,7 +2,10 @@ import { TransactionModel } from "@models/TransactionModel";
 import { ITrainingData, ITransaction } from "@utils/types";
 import { CategoryModel } from "@AI/models/CategoryModel";
 import * as tf from "@tensorflow/tfjs-node";
-import { Category } from "@prisma/client";
+import { Category, TransactionType } from "@prisma/client";
+import * as pdfParse from "pdf-parse";
+import { AccountModel } from "@models/AccountModel";
+import { amountPatterns, parseCurrencyAmount } from "@utils/helpers";
 
 export class TransactionService {
   private readonly model: typeof TransactionModel;
@@ -101,5 +104,172 @@ export class TransactionService {
     })) as ITrainingData["data"];
 
     return { data, categories: categories as string[] };
+  }
+
+  async processPDFService(
+    buffer: Buffer,
+    userId: string
+  ): Promise<ITransaction[]> {
+    try {
+      const account = await AccountModel.getByUserId(userId);
+
+      if (!account) {
+        throw new Error("Account not found");
+      }
+
+      const data = await pdfParse.default(buffer);
+      const text = data.text;
+
+      // Extract transactions from PDF text
+      const transactions = this.extractTransactionsFromPDF(
+        text,
+        userId,
+        account.id
+      );
+
+      // Process each transaction
+      const processedTransactions: ITransaction[] = [];
+      for (const transaction of transactions) {
+        const processed = await this.createService(transaction);
+        processedTransactions.push({
+          ...processed,
+          date: new Date(processed.date).toISOString(),
+          createdAt: new Date(processed.createdAt).toISOString(),
+          updatedAt: new Date(processed.updatedAt).toISOString(),
+        });
+      }
+
+      return processedTransactions;
+    } catch (error) {
+      console.error("Error processing PDF:", error);
+      throw new Error("Failed to process PDF");
+    }
+  }
+
+  private extractTransactionsFromPDF(
+    text: string,
+    userId: string,
+    accountId: string
+  ): ITransaction[] {
+    const transactions: ITransaction[] = [];
+    const lines = text.split("\n");
+
+    // Common patterns in bank statements
+    const datePattern = /(\d{2}\/\d{2}\/\d{4})/;
+
+    let currentDate: string | null = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      // Look for date lines (usually start with a date)
+      const dateMatch = line.match(datePattern);
+      if (dateMatch) {
+        const [_, dateStr] = dateMatch;
+        console.log(dateStr);
+        console.log(dateMatch);
+        currentDate = new Date().toISOString();
+        continue;
+      }
+
+      // Try matching each currency pattern
+      let amountMatch = null;
+
+      // Try each currency pattern, defaulting to EUR if no match found
+      let matched = false;
+      for (const [currency, pattern] of Object.entries(amountPatterns)) {
+        const match = line.match(pattern);
+        if (match) {
+          amountMatch = match;
+
+          matched = true;
+          break;
+        }
+      }
+
+      // If no pattern matched, try EUR pattern as default
+      if (!matched) {
+        const match = line.match(amountPatterns.usd);
+        if (match) {
+          amountMatch = match;
+        }
+      }
+
+      if (amountMatch && currentDate) {
+        const [_, amountStr] = amountMatch;
+        // Normalize the amount string based on the matched pattern
+
+        const numericAmount = parseCurrencyAmount(amountStr);
+
+        // Get description (usually the text before the amount)
+        const description = line.substring(0, line.indexOf(amountStr)).trim();
+
+        // Determine transaction type based on amount
+        const type =
+          numericAmount >= 0 ? TransactionType.INCOME : TransactionType.EXPENSE;
+
+        // Try to categorize based on description
+        const category = this.categorizeTransaction(description);
+
+        transactions.push({
+          amount: Math.abs(numericAmount),
+          type,
+          category,
+          description: description || "Unknown transaction",
+          date: currentDate,
+          accountId,
+          userId,
+        });
+      }
+    }
+
+    return transactions;
+  }
+
+  private categorizeTransaction(description: string): Category {
+    // Simple categorization based on keywords
+    const lowerDesc = description.toLowerCase();
+
+    if (
+      lowerDesc.includes("food") ||
+      lowerDesc.includes("restaurant") ||
+      lowerDesc.includes("grocery")
+    ) {
+      return Category.FOOD;
+    } else if (
+      lowerDesc.includes("transport") ||
+      lowerDesc.includes("uber") ||
+      lowerDesc.includes("taxi")
+    ) {
+      return Category.TRANSPORT;
+    } else if (lowerDesc.includes("rent") || lowerDesc.includes("mortgage")) {
+      return Category.HOUSING;
+    } else if (
+      lowerDesc.includes("electric") ||
+      lowerDesc.includes("water") ||
+      lowerDesc.includes("gas")
+    ) {
+      return Category.UTILITIES;
+    } else if (
+      lowerDesc.includes("entertainment") ||
+      lowerDesc.includes("movie") ||
+      lowerDesc.includes("netflix")
+    ) {
+      return Category.ENTERTAINMENT;
+    } else if (
+      lowerDesc.includes("health") ||
+      lowerDesc.includes("medical") ||
+      lowerDesc.includes("pharmacy")
+    ) {
+      return Category.HEALTHCARE;
+    } else if (
+      lowerDesc.includes("shop") ||
+      lowerDesc.includes("store") ||
+      lowerDesc.includes("mall")
+    ) {
+      return Category.SHOPPING;
+    } else {
+      return Category.OTHERS;
+    }
   }
 }

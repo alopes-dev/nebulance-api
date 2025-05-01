@@ -9,6 +9,7 @@ import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import { registerRoutes } from "@routes/index";
 import fastifyJwt from "@fastify/jwt";
+import fastifyMultipart from "@fastify/multipart";
 export const serverConfig = (app: FastifyTypedInstance) => {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
@@ -23,6 +24,8 @@ export const serverConfig = (app: FastifyTypedInstance) => {
   app.register(fastifyCors, {
     origin: "*",
   });
+
+  app.register(fastifyMultipart);
 
   app.register(fastifySwagger, {
     openapi: {

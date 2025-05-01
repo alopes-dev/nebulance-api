@@ -29,4 +29,48 @@ export class TransactionController {
     const analysis = await this.service.analysisService(userFromToken?.id);
     reply.send(analysis);
   }
+
+  async processPDF(
+    req: FastifyRequest<{
+      Body: {
+        file: string;
+      };
+    }>,
+    reply: FastifyReply
+  ): Promise<void> {
+    try {
+      const userFromToken = await getUserFromToken(req);
+
+      if (!userFromToken) {
+        return reply.status(401).send({
+          error: "Unauthorized",
+        });
+      }
+
+      const { file } = req.body;
+
+      if (!file) {
+        return reply.status(400).send({
+          error: "Missing required fields: file",
+        });
+      }
+
+      const buffer = Buffer.from(file, "base64");
+
+      const transactions = await this.service.processPDFService(
+        buffer,
+        userFromToken?.id
+      );
+
+      reply.send({
+        message: "PDF processed successfully",
+        transactions,
+      });
+    } catch (error) {
+      console.error("Error processing PDF:", error);
+      reply.status(500).send({
+        error: "Failed to process PDF",
+      });
+    }
+  }
 }

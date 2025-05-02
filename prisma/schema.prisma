@@ -24,6 +24,8 @@ model Account {
   name        String
   type        AccountType
   balance     Float
+  isSetup     Boolean     @default(false)
+  currency    String?      @default("USD")
   monthlyExpenses Float @default(0)
   currencyStyle CurrencyStyle? @default(USD)
   goals     Goal[]

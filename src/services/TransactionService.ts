@@ -156,20 +156,32 @@ export class TransactionService {
 
     // Common patterns in bank statements
     const datePattern = /(\d{2}\/\d{2}\/\d{4})/;
+    //06 Nov, 2024
+    const datePattern2 = /(\d{2} \w{3}, \d{4})/;
+    //11/01/2024- 11/30/2024 or 11/01/2024-11/30/2024
+    const statementPeriodPattern =
+      /(\d{2}\/\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{2}\/\d{4})/;
 
     let currentDate: string | null = null;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
 
-      // Look for date lines (usually start with a date)
-      const dateMatch = line.match(datePattern);
-      if (dateMatch) {
-        const [_, dateStr] = dateMatch;
-        console.log(dateStr);
-        console.log(dateMatch);
-        currentDate = new Date().toISOString();
+      // Skip if it's a statement period line
+      if (line.match(statementPeriodPattern)) {
         continue;
+      }
+
+      // Check for valid transaction dates
+      const dateMatch = line.match(datePattern);
+      const dateMatch2 = line.match(datePattern2);
+
+      if (dateMatch || dateMatch2) {
+        const dateStr = dateMatch ? dateMatch[1] : dateMatch2![1];
+
+        const date = new Date(dateStr);
+        const formattedDate = date.toISOString();
+        currentDate = formattedDate;
       }
 
       // Try matching each currency pattern
@@ -181,7 +193,6 @@ export class TransactionService {
         const match = line.match(pattern);
         if (match) {
           amountMatch = match;
-
           matched = true;
           break;
         }
@@ -210,7 +221,7 @@ export class TransactionService {
 
         // Try to categorize based on description
         const category = this.categorizeTransaction(description);
-
+        console.log(description, category);
         transactions.push({
           amount: Math.abs(numericAmount),
           type,

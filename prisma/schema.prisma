@@ -25,7 +25,6 @@ model Account {
   name        String
   type        String
   balance     Float
-  isSetup     Boolean     @default(false)
   currency    String?      @default("USD")
   monthlyExpenses Float @default(0)
   currencyStyle String? @default("USD")
@@ -54,12 +53,6 @@ model Transaction {
   updatedAt   DateTime    @updatedAt
 }
 
-enum AccountType {
-  CHECKING
-  SAVINGS
-  CREDIT_CARD
-  INVESTMENT
-}
 
 enum OnboardingStatus {
   ACCOUNT_CREATION

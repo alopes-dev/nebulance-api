@@ -1,5 +1,4 @@
 import {
-  AccountType,
   Category,
   OnboardingStatus,
   TransactionType,

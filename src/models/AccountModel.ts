@@ -13,7 +13,20 @@ export class AccountModel {
   }
 
   static async getByUserId(userId: string) {
-    return prisma.account.findFirst({ where: { userId } });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const account = await prisma.account.findFirst({
+      where: { userId: user.id },
+    });
+    if (!account) {
+      throw new Error("Account not found");
+    }
+    return {
+      ...account,
+      onboardingStatus: user.onboardingStatus,
+    };
   }
 
   static async create(payload: Omit<IAccount, "id">) {

@@ -5,9 +5,13 @@ const prisma = new PrismaClient();
 
 export class AuthModel {
   static async login(payload: IAuth) {
-    return await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: payload.email },
     });
+    if (!user) {
+      throw new Error("There is no user with this email, please register");
+    }
+    return user;
   }
 
   static async register(payload: IUser) {

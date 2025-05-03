@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "resolutions": {
+    "string-width": "^4.2.3"
+  },
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
     "build": "tsup src --format cjs,esm",

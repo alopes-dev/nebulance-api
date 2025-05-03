@@ -23,12 +23,12 @@ model User {
 model Account {
   id          String      @id @default(cuid())
   name        String
-  type        AccountType
+  type        String
   balance     Float
   isSetup     Boolean     @default(false)
   currency    String?      @default("USD")
   monthlyExpenses Float @default(0)
-  currencyStyle CurrencyStyle? @default(USD)
+  currencyStyle String? @default("USD")
   goals     Goal[]
   userId      String
   user        User        @relation(fields: [userId], references: [id])
@@ -69,11 +69,6 @@ enum OnboardingStatus {
   CATEGORIES_SETUP
   NOTIFICATIONS
   COMPLETE
-}
-
-enum CurrencyStyle {
-  USD
-  EUR
 }
 
 enum TransactionType {

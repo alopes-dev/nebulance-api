@@ -54,9 +54,10 @@ class AccountRoutes {
   private create(app: FastifyTypedInstance, accountSchema: any) {
     const createAccountSchema = z.object({
       name: z.string(),
-      type: z.enum(["CHECKING", "SAVINGS", "CREDIT_CARD", "INVESTMENT"]),
+      type: z.string(),
       balance: z.number(),
       monthlyExpenses: z.number(),
+      currencyStyle: z.string(),
       userId: z.string(),
     });
 

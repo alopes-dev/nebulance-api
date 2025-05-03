@@ -35,9 +35,10 @@ export interface IUser {
 export interface IAccount {
   id?: string;
   name: string;
-  type: AccountType;
+  type: string;
   balance: number;
   monthlyExpenses: number;
+  currencyStyle: string;
   userId: string;
   createdAt?: string;
   updatedAt?: string;

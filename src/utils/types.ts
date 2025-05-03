@@ -1,6 +1,7 @@
 import {
   AccountType,
   Category,
+  OnboardingStatus,
   TransactionType,
   // GoalStatus,
 } from "@prisma/client";
@@ -26,6 +27,7 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
+  onboardingStatus?: OnboardingStatus;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -13,6 +13,7 @@ model User {
   email     String      @unique
   password  String
   name      String
+  onboardingStatus OnboardingStatus? @default(ACCOUNT_CREATION)
   accounts  Account[]
   transactions Transaction[]
   createdAt DateTime    @default(now())
@@ -58,6 +59,16 @@ enum AccountType {
   SAVINGS
   CREDIT_CARD
   INVESTMENT
+}
+
+enum OnboardingStatus {
+  ACCOUNT_CREATION
+  PERSONAL_INFO
+  INITIAL_BALANCE
+  MONTHLY_BUDGET
+  CATEGORIES_SETUP
+  NOTIFICATIONS
+  COMPLETE
 }
 
 enum CurrencyStyle {

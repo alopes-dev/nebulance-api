@@ -42,6 +42,7 @@ export class UserModel {
         id: true,
         email: true,
         name: true,
+        onboardingStatus: true,
         createdAt: true,
         updatedAt: true,
       },

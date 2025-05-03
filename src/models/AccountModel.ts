@@ -72,6 +72,8 @@ export class AccountModel {
           type: payload.type,
           userId: payload.userId,
           monthlyExpenses: payload.monthlyExpenses,
+          currencyStyle: payload.currencyStyle,
+          currency: payload.currency,
         },
         select: { id: true, userId: true },
       });

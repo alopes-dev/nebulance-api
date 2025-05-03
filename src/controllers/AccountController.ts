@@ -31,4 +31,20 @@ export class AccountController {
     const account = await this.service.createAccount(req.body);
     reply.send(account);
   }
+
+  async updateAccount(
+    req: FastifyRequest<{ Params: { id: string }; Body: IAccount }>,
+    reply: FastifyReply
+  ): Promise<void> {
+    const account = await this.service.updateAccount(req.params.id, req.body);
+    reply.send(account);
+  }
+
+  async deleteAccount(
+    req: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply
+  ): Promise<void> {
+    const account = await this.service.deleteAccount(req.params.id);
+    reply.send(account);
+  }
 }

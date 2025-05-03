@@ -21,6 +21,8 @@ class AccountRoutes {
     this.index(app, accountSchema);
     this.getUserAccount(app, accountSchema);
     this.create(app, accountSchema);
+    this.update(app, accountSchema);
+    this.delete(app, accountSchema);
   }
 
   private index(app: FastifyTypedInstance, accountSchema: any) {
@@ -72,6 +74,44 @@ class AccountRoutes {
         },
       },
       this.controller.createAccount.bind(this.controller)
+    );
+  }
+
+  private update(app: FastifyTypedInstance, accountSchema: any) {
+    const updateAccountSchema = z.object({
+      name: z.string(),
+      type: z.string(),
+      balance: z.number(),
+      monthlyExpenses: z.number(),
+      currencyStyle: z.string(),
+      currency: z.string(),
+      userId: z.string(),
+    });
+
+    app.put(
+      `${this.prefix}/:id`,
+      {
+        ...accountSchema,
+        schema: {
+          ...accountSchema.schema,
+          description: "Update an account",
+          body: updateAccountSchema,
+        },
+      },
+      this.controller.updateAccount.bind(this.controller)
+    );
+  }
+  private delete(app: FastifyTypedInstance, accountSchema: any) {
+    app.delete(
+      `${this.prefix}/:id`,
+      {
+        ...accountSchema,
+        schema: {
+          ...accountSchema.schema,
+          description: "Delete an account",
+        },
+      },
+      this.controller.deleteAccount.bind(this.controller)
     );
   }
 }

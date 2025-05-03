@@ -19,4 +19,12 @@ export class AccountService {
   async createAccount(payload: IAccount) {
     return this.model.create(payload);
   }
+
+  async updateAccount(id: string, payload: Partial<IAccount>) {
+    return this.model.update(id, payload);
+  }
+
+  async deleteAccount(id: string) {
+    return this.model.delete(id);
+  }
 }

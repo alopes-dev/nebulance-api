@@ -38,6 +38,7 @@ export interface IAccount {
   balance: number;
   monthlyExpenses: number;
   currencyStyle: string;
+  currency: string;
   userId: string;
   createdAt?: string;
   updatedAt?: string;

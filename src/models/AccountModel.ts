@@ -70,7 +70,6 @@ export class AccountModel {
           balance: payload.balance,
           name: payload.name,
           type: payload.type,
-          userId: payload.userId,
           monthlyExpenses: payload.monthlyExpenses,
           currencyStyle: payload.currencyStyle,
           currency: payload.currency,

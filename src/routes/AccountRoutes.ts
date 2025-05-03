@@ -79,16 +79,15 @@ class AccountRoutes {
 
   private update(app: FastifyTypedInstance, accountSchema: any) {
     const updateAccountSchema = z.object({
-      name: z.string(),
-      type: z.string(),
-      balance: z.number(),
-      monthlyExpenses: z.number(),
-      currencyStyle: z.string(),
-      currency: z.string(),
-      userId: z.string(),
+      name: z.string().optional(),
+      type: z.string().optional(),
+      balance: z.number().optional(),
+      monthlyExpenses: z.number().optional(),
+      currencyStyle: z.string().optional(),
+      currency: z.string().optional(),
     });
 
-    app.put(
+    app.patch(
       `${this.prefix}/:id`,
       {
         ...accountSchema,
